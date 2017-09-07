@@ -87,24 +87,6 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-
-    '''
-    expanded = set()   #form closed set of expanded nodes
-    fringe = util.Stack()    #create the fringe, containing start state
-    fringe.push(problem.getStartState())
-    while True:
-        if fringe.isEmpty(): return []
-        node = fringe.pop()
-        print node
-        if problem.isGoalState(node): return node
-        if node not in expanded:
-            expanded.add(node)
-            for child in problem.getSuccessors(node):
-                print child
-                fringe.push(child[0])
-            dum = raw_input('Enter something: ')
-    '''
-
     expanded = set()   #form closed set of expanded nodes
     fringe = util.Stack()    #create the fringe
     fringe.push((problem.getStartState(), []))
@@ -120,12 +102,32 @@ def depthFirstSearch(problem):
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    expanded = set()   #form closed set of expanded nodes
+    fringe = util.Queue()    #create the fringe
+    fringe.push((problem.getStartState(), []))
+    while True:
+        if fringe.isEmpty(): return []
+        node = fringe.pop()
+        if problem.isGoalState(node[0]): return node[1]
+        if node[0] not in expanded:
+            expanded.add(node[0])
+            for child in problem.getSuccessors(node[0]):
+                fringe.push((child[0], node[1] + [child[1]]))
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    expanded = set()   #form closed set of expanded nodes
+    fringe = util.PriorityQueue()    #create the fringe
+    fringe.push((problem.getStartState(), [], 0), 0) #(loc, path, cost)
+    while True:
+        if fringe.isEmpty(): return []
+        node = fringe.pop()
+        if problem.isGoalState(node[0]): return node[1]
+        if node[0] not in expanded:
+            expanded.add(node[0])
+            for child in problem.getSuccessors(node[0]):
+                fringe.push((child[0], node[1] + [child[1]], node[2]+child[2]), node[2]+child[2])
 
 def nullHeuristic(state, problem=None):
     """
@@ -137,8 +139,17 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
-
+    expanded = set()   #form closed set of expanded nodes
+    fringe = util.PriorityQueue()    #create the fringe
+    fringe.push((problem.getStartState(), [], 0), heuristic(problem.getStartState(),problem)) #(loc, path, cost)
+    while True:
+        if fringe.isEmpty(): return []
+        node = fringe.pop()
+        if problem.isGoalState(node[0]): return node[1]
+        if node[0] not in expanded:
+            expanded.add(node[0])
+            for child in problem.getSuccessors(node[0]):
+                fringe.push((child[0], node[1] + [child[1]], node[2]+child[2]), node[2]+child[2]+heuristic(child[0],problem))
 
 # Abbreviations
 bfs = breadthFirstSearch
