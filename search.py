@@ -87,9 +87,9 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    expanded = set()   #form closed set of expanded nodes
-    fringe = util.Stack()    #create the fringe
-    fringe.push((problem.getStartState(), []))
+    expanded = set()                              #form closed set of expanded nodes
+    fringe = util.Stack()                         #create the fringe
+    fringe.push((problem.getStartState(), []))    #(startstate, path)
     while True:
         if fringe.isEmpty(): return []
         node = fringe.pop()
@@ -97,7 +97,9 @@ def depthFirstSearch(problem):
         if node[0] not in expanded:
             expanded.add(node[0])
             for child in problem.getSuccessors(node[0]):
-                fringe.push((child[0], node[1] + [child[1]]))
+                print child
+                child_path = node[1] + [child[1]]
+                fringe.push((child[0], child_path))
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
@@ -112,14 +114,15 @@ def breadthFirstSearch(problem):
         if node[0] not in expanded:
             expanded.add(node[0])
             for child in problem.getSuccessors(node[0]):
-                fringe.push((child[0], node[1] + [child[1]]))
+                child_path = node[1] + [child[1]]
+                fringe.push((child[0], child_path))
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
     expanded = set()   #form closed set of expanded nodes
     fringe = util.PriorityQueue()    #create the fringe
-    fringe.push((problem.getStartState(), [], 0), 0) #(loc, path, cost)
+    fringe.push((problem.getStartState(), []), 0) #(startstate, path)
     while True:
         if fringe.isEmpty(): return []
         node = fringe.pop()
@@ -127,7 +130,8 @@ def uniformCostSearch(problem):
         if node[0] not in expanded:
             expanded.add(node[0])
             for child in problem.getSuccessors(node[0]):
-                fringe.push((child[0], node[1] + [child[1]], node[2]+child[2]), node[2]+child[2])
+                child_actions = node[1] + [child[1]]
+                fringe.push((child[0], child_actions), problem.getCostOfActions(child_actions))
 
 def nullHeuristic(state, problem=None):
     """
@@ -141,7 +145,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     "*** YOUR CODE HERE ***"
     expanded = set()   #form closed set of expanded nodes
     fringe = util.PriorityQueue()    #create the fringe
-    fringe.push((problem.getStartState(), [], 0), heuristic(problem.getStartState(),problem)) #(loc, path, cost)
+    fringe.push((problem.getStartState(), []), heuristic(problem.getStartState(),problem)) #(loc, path, cost)
     while True:
         if fringe.isEmpty(): return []
         node = fringe.pop()
@@ -149,7 +153,8 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         if node[0] not in expanded:
             expanded.add(node[0])
             for child in problem.getSuccessors(node[0]):
-                fringe.push((child[0], node[1] + [child[1]], node[2]+child[2]), node[2]+child[2]+heuristic(child[0],problem))
+                child_actions = node[1] + [child[1]]
+                fringe.push((child[0], child_actions), problem.getCostOfActions(child_actions)+heuristic(child[0],problem))
 
 # Abbreviations
 bfs = breadthFirstSearch
